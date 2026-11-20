@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "lurkapi"
+dynamic = ["version"]
+description = "The official LurkAPI client: public social media data as JSON from TikTok, Instagram, YouTube, Reddit, X (Twitter), LinkedIn, the Facebook Ad Library and more. No dependencies."
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Mesmer s.r.o.", email = "support@lurkapi.com" }]
+keywords = ["lurkapi", "social media api", "scraper", "web scraping", "tiktok", "instagram", "youtube transcript", "reddit", "twitter", "linkedin", "facebook ad library"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Topic :: Internet :: WWW/HTTP",
+  "Typing :: Typed",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://lurkapi.com"
+Documentation = "https://lurkapi.com/docs"
+Repository = "https://github.com/mesmerlord/lurkapi-sdk"
+
+[tool.hatch.version]
+path = "src/lurkapi/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lurkapi"]
+# Made at release and gitignored, so it has to be named to be packed.
+artifacts = ["src/lurkapi/_operations.pyi"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "tests", "scripts", "README.md", "LICENSE"]
+artifacts = ["src/lurkapi/_operations.pyi"]

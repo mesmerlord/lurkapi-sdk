@@ -1,0 +1,46 @@
+{
+  "name": "lurkapi",
+  "version": "0.1.0",
+  "description": "The official LurkAPI client and CLI: public social media data as JSON from TikTok, Instagram, YouTube, Reddit, X (Twitter), LinkedIn, the Facebook Ad Library and more. One GET request per call, no dependencies.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Mesmer s.r.o. <support@lurkapi.com> (https://lurkapi.com)",
+  "homepage": "https://lurkapi.com/docs",
+  "repository": { "type": "git", "url": "git+https://github.com/mesmerlord/lurkapi-sdk.git", "directory": "js" },
+  "bugs": "https://github.com/mesmerlord/lurkapi-sdk/issues",
+  "keywords": [
+    "lurkapi",
+    "social-media-api",
+    "social-media-scraper",
+    "scraper",
+    "web-scraping",
+    "tiktok-api",
+    "instagram-api",
+    "youtube-transcript",
+    "reddit-api",
+    "twitter-api",
+    "linkedin-api",
+    "facebook-ad-library",
+    "mcp",
+    "mcp-server",
+    "cli"
+  ],
+  "exports": { ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" } },
+  "types": "./dist/index.d.ts",
+  "bin": { "lurkapi": "dist/cli.js" },
+  "files": ["dist"],
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "types": "tsx scripts/generate.ts",
+    "prepack": "npm run build && npm run types",
+    "tsc": "tsc --noEmit",
+    "test": "tsx test/client.test.ts && tsx test/cli.test.ts && tsx test/generate.test.ts",
+    "smoke": "tsx test/smoke.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

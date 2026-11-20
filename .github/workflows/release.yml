@@ -1,0 +1,75 @@
+# A tag v<version> tests both clients, then publishes them through trusted publishing (OIDC): no token is stored.
+# The owner's one-time setup is in PUBLISHING.md.
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: The tag is the version
+        run: test "v$(node -p "require('./js/package.json').version")" = "$GITHUB_REF_NAME"
+      - name: JavaScript
+        working-directory: js
+        run: npm ci && npm run tsc && npm test && npm run smoke
+      - name: Python
+        working-directory: python
+        run: python -m unittest discover -s tests && python tests/smoke.py
+
+  npm:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      # Trusted publishing needs npm 11.5.1 or newer.
+      - run: npm install -g npm@latest
+      - name: Publish, unless this version is already there
+        working-directory: js
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if npm view "lurkapi@$version" version >/dev/null 2>&1; then
+            echo "lurkapi@$version is already on npm"
+          else
+            npm ci
+            npm publish --access public
+          fi
+
+  pypi:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Build, with the stub from the live openapi.json
+        working-directory: python
+        run: python scripts/generate.py && python -m pip install build && python -m build
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: python/dist
+          skip-existing: true

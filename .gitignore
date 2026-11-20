@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.typecheck/
+__pycache__/
+*.egg-info/
+# Made at release from the live openapi.json
+python/src/lurkapi/_operations.pyi
